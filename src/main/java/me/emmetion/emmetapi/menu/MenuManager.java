@@ -33,10 +33,6 @@ public class MenuManager {
 
     public static void setup(Server server, Plugin plugin){
 
-        if (isSetup){
-            return;
-        }
-
         System.out.println("MenuManager has been setup for " + plugin.getName() + "!");
         registerMenuListener(server,plugin);
         isSetup = true;
@@ -46,7 +42,8 @@ public class MenuManager {
         try{
             menuClass.getConstructor(PlayerMenuUtility.class).newInstance(getPlayerMenuUtility(player)).open();
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-
+            e.printStackTrace();
+            throw new MenuManagerException();
         }
     }
 
