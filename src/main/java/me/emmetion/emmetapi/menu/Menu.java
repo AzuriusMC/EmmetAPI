@@ -18,13 +18,16 @@ import java.util.stream.Collectors;
 
 public abstract class Menu implements InventoryHolder {
 
+    //Protected values that can be accessed in the menus
     protected PlayerMenuUtility playerMenuUtility;
     protected Player p;
     protected Inventory inventory;
-    protected ItemStack FILLER_GLASS = makeItem(Material.GRAY_STAINED_GLASS_PANE,"&c",null);
+    protected ItemStack FILLER_GLASS = makeItem(Material.GRAY_STAINED_GLASS_PANE, " ");
 
-
-    public Menu(PlayerMenuUtility playerMenuUtility){
+    //Constructor for Menu. Pass in a PlayerMenuUtility so that
+    // we have information on who's menu this is and
+    // what info is to be transferred
+    public Menu(PlayerMenuUtility playerMenuUtility) {
         this.playerMenuUtility = playerMenuUtility;
         this.p = playerMenuUtility.getOwner();
     }
@@ -33,14 +36,14 @@ public abstract class Menu implements InventoryHolder {
 
     public abstract int getSlots();
 
-    public abstract boolean cancelAllInteractions();
+    public abstract boolean cancelAllClicks();
 
-    public abstract void handleMenu(InventoryClickEvent event) throws MenuManagerNotSetupException, MenuManagerException;
+    public abstract void handleMenu(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException;
 
     public abstract void setMenuItems();
 
     public void open() {
-        inventory = Bukkit.createInventory(this, getSlots(),getMenuName());
+        inventory = Bukkit.createInventory(this, getSlots(), getMenuName());
 
         this.setMenuItems();
 
@@ -49,7 +52,7 @@ public abstract class Menu implements InventoryHolder {
     }
 
     public void back() throws MenuManagerException, MenuManagerNotSetupException {
-        MenuManager.openMenu(playerMenuUtility.lastMenu().getClass(),playerMenuUtility.getOwner());
+        MenuManager.openMenu(playerMenuUtility.lastMenu().getClass(), playerMenuUtility.getOwner());
     }
 
     protected void reloadItems() {
@@ -59,7 +62,7 @@ public abstract class Menu implements InventoryHolder {
         setMenuItems();
     }
 
-    protected void reload() throws MenuManagerNotSetupException, MenuManagerException {
+    protected void reload() throws MenuManagerException, MenuManagerNotSetupException {
         p.closeInventory();
         MenuManager.openMenu(this.getClass(), p);
     }
@@ -70,18 +73,29 @@ public abstract class Menu implements InventoryHolder {
     }
 
     public void setFillerGlass(){
-        for (int i = 0; i < getSlots(); i++){
-            if (inventory.getItem(i) == null) {
+        for (int i = 0; i < getSlots(); i++) {
+            if (inventory.getItem(i) == null){
                 inventory.setItem(i, FILLER_GLASS);
             }
         }
     }
 
-    public ItemStack makeItem(Material material, String displayName, String... lore){
+    public void setFillerGlass(ItemStack itemStack) {
+        for (int i = 0; i < getSlots(); i++) {
+            if (inventory.getItem(i) == null){
+                inventory.setItem(i, itemStack);
+            }
+        }
+    }
+
+    public ItemStack makeItem(Material material, String displayName, String... lore) {
+
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
         assert itemMeta != null;
-        itemMeta.setDisplayName(ColorTranslator.getColor(displayName));
+        itemMeta.setDisplayName(displayName);
+
+        //Automatically translate color codes provided
         itemMeta.setLore(Arrays.stream(lore).map(ColorTranslator::getColor).collect(Collectors.toList()));
         item.setItemMeta(itemMeta);
 
