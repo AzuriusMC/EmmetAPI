@@ -1,0 +1,4 @@
+name: EmmetAPI
+version: ${project.version}
+main: me.emmetion.emmetapi.EmmetAPI
+api-version: 1.17
