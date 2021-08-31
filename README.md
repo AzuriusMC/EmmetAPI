@@ -1,0 +1,1 @@
+EmmetAPI is for basic functionalities to remove repetitive code across projects.
